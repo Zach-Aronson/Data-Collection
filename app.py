@@ -14,6 +14,8 @@ from typing import List, Optional, Tuple
 import numpy as np
 import pandas as pd
 import plotly.graph_objs as go
+import os
+
 from plotly.subplots import make_subplots
 
 from dash import Dash, html, dcc, Input, Output, State, callback_context, no_update
@@ -460,5 +462,10 @@ def export_stats(n_clicks, records, relayout, figure, mass_lb, cda_direct, cd, a
     # Return CSV
     return dcc.send_data_frame(df_out.to_csv, "force_stats.csv", index=False)
 
+# expose WSGI app for Gunicorn
+server = app.server
+
 if __name__ == "__main__":
-    app.run(debug=True, host="127.0.0.1", port=8050)
+    # local/dev run; Render uses gunicorn with `server` above
+    app.run(debug=True, host="0.0.0.0", port=int(os.environ.get("PORT", 8050)))
+
